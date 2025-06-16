@@ -9,7 +9,7 @@ namespace HR_Operations_System.Models
         public string DescA { get; set; }
         public string DescE { get; set; }
 
-        public virtual IEnumerable<Node> Node { get; set; }
+        public virtual IEnumerable<Node>? Node { get; set; }
     }
 
 
