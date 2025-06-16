@@ -1,14 +1,31 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HR_Operations_System.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HR_Operations_System.Data
 {
-    public class AppDbContext : IdentityDbContext<IdentityUser>
+    public class AppDbContext : IdentityDbContext<AppUser>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions options) : base(options)
+        {
+        }
 
-        //public DbSet<Customer> Customers { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<TimingPlan> TimingPlans { get; set; }
+        public DbSet<Node> Nodes { get; set; }
+        public DbSet<Location> Locations { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<AppUser>()
+                .HasOne(u => u.Employee)
+                .WithOne(e => e.ApplicationUser)
+                .HasForeignKey<Employee>(e => e.UserId);
+        }
 
     }
 

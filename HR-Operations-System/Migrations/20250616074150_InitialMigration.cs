@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HR_Operations_System.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +30,8 @@ namespace HR_Operations_System.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -48,6 +50,39 @@ namespace HR_Operations_System.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Locations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DescA = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescE = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TimingPlans",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DescA = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescE = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FromTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    ToTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    RmdFromTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    RmdToTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    IsRamadan = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TimingPlans", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,6 +191,91 @@ namespace HR_Operations_System.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Nodes",
+                columns: table => new
+                {
+                    SerialNo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DescA = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DescE = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LocCode = table.Column<int>(type: "int", nullable: false),
+                    Floor = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Nodes", x => x.SerialNo);
+                    table.ForeignKey(
+                        name: "FK_Nodes_Locations_LocCode",
+                        column: x => x.LocCode,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    FingerCode = table.Column<int>(type: "int", nullable: false),
+                    DeptCode = table.Column<int>(type: "int", nullable: false),
+                    NameA = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NameE = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TimingCode = table.Column<int>(type: "int", nullable: false),
+                    JobType = table.Column<int>(type: "int", nullable: false),
+                    Sex = table.Column<int>(type: "int", nullable: false),
+                    CheckLate = table.Column<bool>(type: "bit", nullable: false),
+                    HasAllow = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Employees_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Employees_TimingPlans_TimingCode",
+                        column: x => x.TimingCode,
+                        principalTable: "TimingPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Attendances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FingerCode = table.Column<int>(type: "int", nullable: false),
+                    IODateTIme = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NodeSerialNo = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TrType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attendances", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Attendances_Employees_FingerCode",
+                        column: x => x.FingerCode,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Attendances_Nodes_NodeSerialNo",
+                        column: x => x.NodeSerialNo,
+                        principalTable: "Nodes",
+                        principalColumn: "SerialNo",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -194,6 +314,33 @@ namespace HR_Operations_System.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attendances_FingerCode",
+                table: "Attendances",
+                column: "FingerCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Attendances_NodeSerialNo",
+                table: "Attendances",
+                column: "NodeSerialNo");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_TimingCode",
+                table: "Employees",
+                column: "TimingCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_UserId",
+                table: "Employees",
+                column: "UserId",
+                unique: true,
+                filter: "[UserId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Nodes_LocCode",
+                table: "Nodes",
+                column: "LocCode");
         }
 
         /// <inheritdoc />
@@ -215,10 +362,25 @@ namespace HR_Operations_System.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Attendances");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "Nodes");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "TimingPlans");
+
+            migrationBuilder.DropTable(
+                name: "Locations");
         }
     }
 }

@@ -9,5 +9,5 @@ namespace HR_Operations_System.Data
         public string LastName { get; set; }
         public virtual Employee? Employee { get; set; }
     }
-
+    
 }
