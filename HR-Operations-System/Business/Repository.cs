@@ -28,6 +28,11 @@ namespace HR_Operations_System.Business
             return await _db.Set<T>().FirstOrDefaultAsync(predicate);
         }
 
+        public async Task<List<T>> GetListByAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return await _db.Set<T>().Where(predicate).ToListAsync();
+        }
+
         public async Task AddAsync<T>(T entity) where T : class
         {
             await _db.Set<T>().AddAsync(entity);
