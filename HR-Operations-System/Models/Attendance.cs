@@ -11,7 +11,7 @@ namespace HR_Operations_System.Models
         public int FingerCode { get; set; }
         public virtual Employee? Employee { get; set; }
 
-        public DateTime IODateTIme { get; set; }
+        public DateTime IODateTime { get; set; }
 
         [ForeignKey(nameof(Node))]
         public string NodeSerialNo { get; set; }
@@ -20,7 +20,7 @@ namespace HR_Operations_System.Models
         public bool IsActive { get; set; }
         public string? Photo { get; set; }
         public int TrType { get; set; }
-
+  
     }
 
 }
