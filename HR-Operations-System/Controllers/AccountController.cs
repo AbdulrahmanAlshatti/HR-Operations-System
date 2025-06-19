@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
 using System.Text;
 
 namespace HR_Operations_System.Controllers
@@ -19,20 +20,23 @@ namespace HR_Operations_System.Controllers
         private SignInManager<AppUser> _signinManager;
         private RoleManager<IdentityRole> _roleManager;
         private IRepository _rep;
+        private IJwtService _jwtService;
 
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(UserManager<AppUser> userManager,
-            SignInManager<AppUser> signinManager,
-            RoleManager<IdentityRole> roleManager,
-            ILogger<AccountController> logger,
-            IRepository rep)
+            SignInManager<AppUser> signinManager, 
+            RoleManager<IdentityRole> roleManager, 
+            ILogger<AccountController> logger, 
+            IRepository rep,
+            IJwtService jwtService)
         {
             _userManager = userManager;
             _signinManager = signinManager;
             _roleManager = roleManager;
             _rep = rep;
             _logger = logger;
+            _jwtService = jwtService;
         }
 
         [HttpPost]
@@ -80,9 +84,26 @@ namespace HR_Operations_System.Controllers
                 //emailrequest.SendEmail(data.Email, "Credentials", $"Dear {prefix}.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
                 return BadRequest(result.Errors);
             }
-
+            
         }
 
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (user == null) return NotFound();
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            // Mark first login as complete
+            user.IsFirstLogin = false;
+            await _userManager.UpdateAsync(user);
+
+            return Ok("Password changed successfully.");
+        }
         public async Task<int> GenerateFingerCode()
         {
             int _min = 0000;
