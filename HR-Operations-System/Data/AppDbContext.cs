@@ -16,6 +16,7 @@ namespace HR_Operations_System.Data
         public DbSet<TimingPlan> TimingPlans { get; set; }
         public DbSet<Node> Nodes { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -33,10 +33,19 @@ namespace HR_Operations_System.Business
             return await _db.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task AddAsync<T>(T entity) where T : class
+        public async Task<bool> AddAsync<T>(T entity) where T : class
         {
-            await _db.Set<T>().AddAsync(entity);
-            await SaveAsync();
+            try
+            {
+                await _db.Set<T>().AddAsync(entity);
+                await SaveAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
         public async Task UpdateAsync<T>(object id, Func<T, Task> updateFn) where T : class
