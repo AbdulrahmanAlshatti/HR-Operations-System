@@ -90,13 +90,14 @@ namespace HR_Operations_System.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
+            var emp = await _rep.GetByAsync<Employee>(c => c.UserId == user.Id);
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
                 return Unauthorized("Invalid credentials.");
             }
 
             // Create JWT token
-            var token = await _jwtService.GenerateToken(user);
+            var token = await _jwtService.GenerateToken(user,emp);
 
             // Prepare response
             var response = new AuthResponse
@@ -107,7 +108,7 @@ namespace HR_Operations_System.Controllers
                 IsFirstLogin = user.IsFirstLogin // Include it
             };
 
-            return Ok(response);
+            return Ok(new { token });
         }
 
         [HttpPost("change-password")]
