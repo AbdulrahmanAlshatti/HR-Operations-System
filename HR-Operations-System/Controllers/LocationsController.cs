@@ -1,6 +1,7 @@
 ﻿using HR_Operations_System.Business;
 using HR_Operations_System.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Linq.Expressions;
 
 namespace HR_Operations_System.Controllers
