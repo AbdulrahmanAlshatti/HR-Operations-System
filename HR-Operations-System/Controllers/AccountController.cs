@@ -26,8 +26,8 @@ namespace HR_Operations_System.Controllers
 
         public AccountController(UserManager<AppUser> userManager,
             SignInManager<AppUser> signinManager, 
-            RoleManager<IdentityRole> roleManager,
-            ILogger<AccountController> logger,
+            RoleManager<IdentityRole> roleManager, 
+            ILogger<AccountController> logger, 
             IRepository rep,
             IJwtService jwtService)
         {

@@ -7,7 +7,6 @@ namespace HR_Operations_System.Data
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public bool IsFirstLogin { get; set; } = true;
         public virtual Employee? Employee { get; set; }
     }
     

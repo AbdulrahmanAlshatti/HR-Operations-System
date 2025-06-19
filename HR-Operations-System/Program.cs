@@ -84,20 +84,20 @@ builder.Services.AddAuthentication(options =>
 });
 
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowFrontend",
-//        policy =>
-//        {
-//            policy.WithOrigins("http://localhost:4200")
-//                  .AllowAnyMethod()
-//                  .AllowAnyHeader();
-//        });
-//});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
 
 
 var app = builder.Build();
-//app.UseCors("AllowFrontend");
+app.UseCors("AllowFrontend");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
