@@ -23,9 +23,9 @@ namespace HR_Operations_System.Controllers
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(UserManager<AppUser> userManager,
-            SignInManager<AppUser> signinManager, 
-            RoleManager<IdentityRole> roleManager, 
-            ILogger<AccountController> logger, 
+            SignInManager<AppUser> signinManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogger<AccountController> logger,
             IRepository rep)
         {
             _userManager = userManager;
@@ -49,6 +49,7 @@ namespace HR_Operations_System.Controllers
                 LastName = data.LastName,
                 IsFirstLogin = true
             };
+            string prefix = data.Gender == 1 ? "Mr" : "Ms";
             var result = await _userManager.CreateAsync(user, password);
             if (result.Succeeded)
             {
@@ -68,18 +69,18 @@ namespace HR_Operations_System.Controllers
                 });
                 if(isAdded == true)
                 {
-                    emailrequest.SendEmail(data.Email, "Credentials", $"Dear Mr.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
+                    emailrequest.SendEmail(data.Email, "Credentials", $"Dear {prefix}.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
                     return Ok();
                 }
-                emailrequest.SendEmail(data.Email, "Credentials", $"Dear Mr.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
+                //emailrequest.SendEmail(data.Email, "Credentials", $"Dear {prefix}.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
                 return BadRequest();
             }
             else
             {
-                emailrequest.SendEmail(data.Email, "Credentials", $"Dear Mr.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
+                //emailrequest.SendEmail(data.Email, "Credentials", $"Dear {prefix}.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
                 return BadRequest(result.Errors);
             }
-            
+
         }
 
         public async Task<int> GenerateFingerCode()
@@ -87,7 +88,7 @@ namespace HR_Operations_System.Controllers
             int _min = 0000;
             int _max = 9999;
             Random _rdm = new Random();
-            
+
             var fingerCodes = (await _rep.GetAsync<Employee>()).Select(c => c.FingerCode);
             int generatedCode = _rdm.Next(_min, _max);
             while(fingerCodes.Contains(generatedCode)){

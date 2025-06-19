@@ -151,21 +151,19 @@ namespace HR_Operations_System.Controllers
                     minutes = 5,
                 });
             }
-
-            if (notAtWorkSinceTime.HasValue)
-            {
-                transactionList.Add(new Transaction() //excuse when leaving
+            if (wentToWork)
+                if (notAtWorkSinceTime.HasValue)
                 {
-                    transactionType = TransactionType.Excuse,
-                    Date = new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day),
-                    FromTime = notAtWorkSinceTime.Value,
-                    ToTime = timingPlan.ToTime,
-                    minutes = (int)timingPlan.ToTime.TotalMinutes - (int)notAtWorkSinceTime.Value.TotalMinutes,
-                });
-            }
-            else
-            {
-                if (wentToWork && !fingerPrintsAfterWork.Any(x => x.TrType == 1))
+                    transactionList.Add(new Transaction() //excuse when leaving
+                    {
+                        transactionType = TransactionType.Excuse,
+                        Date = new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day),
+                        FromTime = notAtWorkSinceTime.Value,
+                        ToTime = timingPlan.ToTime,
+                        minutes = (int)timingPlan.ToTime.TotalMinutes - (int)notAtWorkSinceTime.Value.TotalMinutes,
+                    });
+                }
+                else if (!fingerPrintsAfterWork.Any(x => x.TrType == 1))
                     transactionList.Add(new Transaction() //forgot fingerprint out
                     {
                         transactionType = TransactionType.ForgotFingerPrintOut,
@@ -174,7 +172,7 @@ namespace HR_Operations_System.Controllers
                         ToTime = timingPlan.ToTime,
                         minutes = 5,
                     });
-            }
+
 
             return transactionList;
         }
