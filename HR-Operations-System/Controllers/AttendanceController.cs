@@ -82,7 +82,8 @@ namespace HR_Operations_System.Controllers
         {
             return date.DayOfWeek == DayOfWeek.Friday || date.DayOfWeek == DayOfWeek.Saturday;
         }
-
+        [HttpPost]
+        [Route("GetTransactionsOfDay")]
         public async Task<IEnumerable<Transaction>> GetTransactionsOfDay(int FingerCode, DateTime dateTime)
         {
             var fingerPrints = await _rep.GetListByAsync<Attendance>(x => x.FingerCode == FingerCode && x.IODateTime.Date == dateTime);

@@ -87,7 +87,25 @@ namespace HR_Operations_System.Controllers
             
         }
 
-        [HttpPost("change-password")]
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            var result = await _signinManager.PasswordSignInAsync(request.Username, request.Password, false, false);
+
+            if (result.Succeeded)
+            {
+                var user = await _userManager.FindByNameAsync(request.Username);
+                var emp = await _rep.GetByAsync<Employee>(emp => emp.UserId == user.Id);
+                var token = await _jwtService.GenerateTokenAsync(user, emp);
+                return Ok(new { token });
+            }
+
+            return Unauthorized("Invalid credentials");
+        }
+
+        [HttpPost]
+        [Route("ChangePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
         {
             var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -104,7 +122,8 @@ namespace HR_Operations_System.Controllers
 
             return Ok("Password changed successfully.");
         }
-        public async Task<int> GenerateFingerCode()
+        [NonAction]
+        private async Task<int> GenerateFingerCode()
         {
             int _min = 0000;
             int _max = 9999;
@@ -117,7 +136,7 @@ namespace HR_Operations_System.Controllers
             }
             return generatedCode;
         }
-        public static string GeneratePassword(int length = 8)
+        private string GeneratePassword(int length = 8)
         {
             const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const string lower = "abcdefghijklmnopqrstuvwxyz";

@@ -15,7 +15,7 @@ namespace HR_Operations_System.Business
             _config = config;
         }
 
-        public Task<string> GenerateToken(AppUser user, Employee emp)
+        public Task<string> GenerateTokenAsync(AppUser user, Employee emp)
         {
             var claims = new[]
             {

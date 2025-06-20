@@ -5,6 +5,6 @@ namespace HR_Operations_System.Business
 {
     public interface IJwtService
     {
-        Task<string> GenerateToken(AppUser user, Employee Emp);
+        Task<string> GenerateTokenAsync(AppUser user, Employee Emp);
     }
 }
