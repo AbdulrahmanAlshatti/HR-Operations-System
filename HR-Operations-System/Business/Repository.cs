@@ -13,6 +13,13 @@ namespace HR_Operations_System.Business
             _db = db;
         }
 
+
+
+        public async Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return await _db.Set<T>().AnyAsync(predicate);
+        }
+
         public Task<IQueryable<T>> GetAsync<T>() where T : class
         {
             return Task.FromResult(_db.Set<T>().AsQueryable());

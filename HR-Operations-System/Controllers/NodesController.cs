@@ -1,10 +1,14 @@
 ﻿using HR_Operations_System.Business;
 using HR_Operations_System.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace HR_Operations_System.Controllers
 {
-    public class NodesController : ControllerBase   
+    [Route("api/[controller]")]
+    [ApiController]
+    public class NodesController : ControllerBase
     {
         private IRepository _rep;
         private readonly ILogger<NodesController> _logger;
@@ -18,7 +22,14 @@ namespace HR_Operations_System.Controllers
         [Route("GetNodes")]
         public async Task<ActionResult<IEnumerable<Node>>> GetNodes()
         {
-            var locations = await _rep.GetAsync<Node>();
+            var locations = (await _rep.GetAsync<Node>()).Select(x => new
+            {
+                x.SerialNo,
+                x.DescA,
+                x.DescE,
+                x.Location,
+                x.Floor,
+            });
             return Ok(locations);
         }
         [HttpPost]
@@ -26,14 +37,14 @@ namespace HR_Operations_System.Controllers
         public async Task<ActionResult> AddNode(Node entity)
         {
             await _rep.AddAsync<Node>(entity);
-            return Ok("Location Has Been Added");
+            return Ok(new { message = "Location Has Been Added" });
         }
         [HttpDelete]
         [Route("DeleteNode/{id}")]
         public async Task<ActionResult> DeleteNode(int id)
         {
             await _rep.DeleteAsync<Location>(c => c.Id == id);
-            return Ok("Location Has Been Deleted Succesfully");
+            return Ok(new { message = "Location Has Been Deleted Succesfully" });
         }
         [HttpPut]
         [Route("UpdateNode")]
@@ -41,20 +52,28 @@ namespace HR_Operations_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                 await _rep.UpdateAsync<Node>(entity.SerialNo, record => {
+                await _rep.UpdateAsync<Node>(entity.SerialNo, record =>
+                {
                     record.DescA = entity.DescA == "" ? record.DescA : entity.DescA;
                     record.DescE = entity.DescE == "" ? record.DescE : entity.DescE;
                     record.LocCode = entity.LocCode == 0 ? record.LocCode : entity.LocCode;
                     record.Floor = entity.Floor == "" ? record.Floor : entity.Floor;
                     return Task.CompletedTask;
                 });
-                
+
                 return Ok(_rep.GetByIdAsync<Node>(entity.SerialNo));
             }
             else
             {
                 return BadRequest();
             }
+        }
+
+        [HttpGet("CheckIdExists/{serialNo}")]
+        public async Task<IActionResult> CheckIdExists(string serialNo)
+      {
+            bool exists = await _rep.AnyAsync<Node>(x => x.SerialNo == serialNo);
+            return Ok(exists);
         }
     }
 }

@@ -4,6 +4,7 @@ namespace HR_Operations_System.Business
 {
     public interface IRepository
     {
+        Task<bool> AnyAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
         Task<IQueryable<T>> GetAsync<T>() where T : class;
         Task<T> GetByIdAsync<T>(object id) where T : class;
         Task<T> GetByAsync<T>(Expression<Func<T, bool>> predicate) where T : class;

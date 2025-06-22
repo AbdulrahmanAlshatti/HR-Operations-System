@@ -1,13 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HR_Operations_System.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HR_Operations_System.Controllers
 {
-    public class EmployeesController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EmployeesController : ControllerBase
     {
-        public IActionResult Index()
+        private readonly AppDbContext _context;
+        public EmployeesController(AppDbContext context)
         {
-            return View();
+            _context = context;
         }
+
+        [HttpGet("all")]
+        public IActionResult GetAllEmployees()
+        {
+            var employees = _context.Employees.Select(x => new
+            {
+                x.Id,
+                Email = x.ApplicationUser == null ? "" : x.ApplicationUser.Email,
+                x.FingerCode,
+                x.NameE,
+                x.NameA,
+                x.DeptCode,
+                x.TimingPlan,
+                x.JobType,
+                x.Sex,
+                x.CheckLate,
+                x.HasAllow,
+                x.IsActive,
+            });
+            return Ok(employees);
+        }
+
     }
 
 
