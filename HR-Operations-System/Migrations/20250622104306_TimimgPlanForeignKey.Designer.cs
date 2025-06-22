@@ -4,6 +4,7 @@ using HR_Operations_System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HR_Operations_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250622104306_TimimgPlanForeignKey")]
+    partial class TimimgPlanForeignKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -313,9 +316,6 @@ namespace HR_Operations_System.Migrations
 
                     b.Property<TimeSpan>("FromTime")
                         .HasColumnType("time");
-
-                    b.Property<bool>("IsAllow")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsRamadan")
                         .HasColumnType("bit");

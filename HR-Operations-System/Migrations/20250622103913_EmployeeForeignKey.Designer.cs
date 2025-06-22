@@ -4,6 +4,7 @@ using HR_Operations_System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HR_Operations_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250622103913_EmployeeForeignKey")]
+    partial class EmployeeForeignKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,8 +245,6 @@ namespace HR_Operations_System.Migrations
 
                     b.HasIndex("EmpId");
 
-                    b.HasIndex("TimingCode");
-
                     b.ToTable("EmployeeAllows");
                 });
 
@@ -313,9 +314,6 @@ namespace HR_Operations_System.Migrations
 
                     b.Property<TimeSpan>("FromTime")
                         .HasColumnType("time");
-
-                    b.Property<bool>("IsAllow")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsRamadan")
                         .HasColumnType("bit");
@@ -511,15 +509,7 @@ namespace HR_Operations_System.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HR_Operations_System.Models.TimingPlan", "TimingPlan")
-                        .WithMany("EmployeeAllows")
-                        .HasForeignKey("TimingCode")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Employee");
-
-                    b.Navigation("TimingPlan");
                 });
 
             modelBuilder.Entity("HR_Operations_System.Models.Node", b =>
@@ -606,8 +596,6 @@ namespace HR_Operations_System.Migrations
 
             modelBuilder.Entity("HR_Operations_System.Models.TimingPlan", b =>
                 {
-                    b.Navigation("EmployeeAllows");
-
                     b.Navigation("Employees");
                 });
 #pragma warning restore 612, 618

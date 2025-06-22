@@ -11,8 +11,10 @@
         public TimeSpan RmdFromTime { get; set; }
         public TimeSpan RmdToTime { get; set; }
         public bool IsRamadan { get; set; }
-
+        public bool IsAllow { get; set; }
         public virtual IEnumerable<Employee>? Employees { get; set; }
+        public virtual IEnumerable<EmployeeAllow>? EmployeeAllows { get; set; }
     }
+
 
 }

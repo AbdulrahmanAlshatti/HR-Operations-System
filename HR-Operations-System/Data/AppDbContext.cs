@@ -17,6 +17,7 @@ namespace HR_Operations_System.Data
         public DbSet<Node> Nodes { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<EmployeeAllow> EmployeeAllows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,14 @@ namespace HR_Operations_System.Data
                 .HasOne(u => u.Employee)
                 .WithOne(e => e.ApplicationUser)
                 .HasForeignKey<Employee>(e => e.UserId);
+
+            modelBuilder.Entity<EmployeeAllow>()
+                .HasOne(e => e.TimingPlan)
+                .WithMany(t => t.EmployeeAllows)
+                .HasForeignKey(e => e.TimingCode)
+                .OnDelete(DeleteBehavior.NoAction); // 👈 Prevent cascade delete
+
+
         }
 
     }
