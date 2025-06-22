@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HR_Operations_System.Migrations
 {
     /// <inheritdoc />
-    public partial class EmployeeAllow : Migration
+    public partial class EmployeeAllow2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

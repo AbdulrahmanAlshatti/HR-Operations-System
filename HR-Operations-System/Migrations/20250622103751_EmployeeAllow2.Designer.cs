@@ -13,7 +13,7 @@ namespace HR_Operations_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250622103751_EmployeeAllow")]
-    partial class EmployeeAllow
+    partial class EmployeeAllow2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
