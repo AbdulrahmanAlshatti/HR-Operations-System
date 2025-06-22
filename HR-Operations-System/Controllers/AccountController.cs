@@ -97,6 +97,7 @@ namespace HR_Operations_System.Controllers
             {
                 var user = await _userManager.FindByNameAsync(request.Username);
                 var emp = await _rep.GetByAsync<Employee>(emp => emp.UserId == user.Id);
+                emp.TimingPlan = await _rep.GetByIdAsync<TimingPlan>(emp.TimingCode);
                 var token = await _jwtService.GenerateTokenAsync(user, emp);
                 return Ok(new { token });
             }

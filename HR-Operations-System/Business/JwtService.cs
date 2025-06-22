@@ -4,10 +4,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace HR_Operations_System.Business
 {
-    public class JwtService: IJwtService
+    public class JwtService : IJwtService
     {
         private readonly IConfiguration _config;
         public JwtService(IConfiguration config)
@@ -15,14 +16,33 @@ namespace HR_Operations_System.Business
             _config = config;
         }
 
+        string GetTimeString(TimeSpan time)
+        {
+            DateTime dateTime = DateTime.Today.Add(time);
+            return dateTime.ToString("hh:mm tt");
+        }
+
         public Task<string> GenerateTokenAsync(AppUser user, Employee emp)
         {
+            var userInfo = new
+            {
+                userName = user.UserName,
+                firstName = user.FirstName,
+                lastName = user.LastName,
+                email = user.Email,
+                deptCode = user.Employee.DeptCode,
+                fingerCode = user.Employee.FingerCode,
+                fromTime = GetTimeString(user.Employee.TimingPlan.FromTime),
+                toTime = GetTimeString(user.Employee.TimingPlan.ToTime),
+            };
+
             var claims = new[]
             {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim("fingerCode", emp.FingerCode.ToString()),
-            new Claim("empId", emp.Id.ToString())
+            new Claim("empId", emp.Id.ToString()),
+            new Claim("userInfo", JsonSerializer.Serialize(userInfo)),
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
