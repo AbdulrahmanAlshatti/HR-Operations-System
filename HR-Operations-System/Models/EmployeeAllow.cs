@@ -13,7 +13,7 @@ namespace HR_Operations_System.Models
         [ForeignKey(nameof(TimingPlan))]
         public int TimingCode { get; set; }
         public virtual TimingPlan? TimingPlan { get; set; }
-        public bool Status { get; set; }
+        public bool Status { get; set; } = true;
 
     }
 }

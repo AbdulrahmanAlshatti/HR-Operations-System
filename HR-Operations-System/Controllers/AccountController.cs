@@ -53,10 +53,17 @@ namespace HR_Operations_System.Controllers
                 LastName = data.LastName,
                 IsFirstLogin = true
             };
+
             string prefix = data.Gender == 1 ? "Mr" : "Ms";
             var result = await _userManager.CreateAsync(user, password);
             if (result.Succeeded)
             {
+                 var roleResult =  await _userManager.AddToRoleAsync(user, data.Role);
+                if (roleResult.Errors.Any())
+                {
+                    return BadRequest(roleResult.Errors);
+                }
+
                 var isAdded = await _rep.AddAsync<Employee>(new Employee
                 {
                     UserId = user.Id,
@@ -85,6 +92,24 @@ namespace HR_Operations_System.Controllers
                 return BadRequest(result.Errors);
             }
             
+        }
+        [HttpPost]
+        [Route("AddRole")]
+        public async Task<ActionResult> AddRole(string roleName)
+        {
+            IdentityRole role = new IdentityRole
+            {
+                Name = roleName
+            };
+            var result = await _roleManager.CreateAsync(role);
+            if (result.Succeeded)
+            {
+                return Ok("Role Successfully Created");
+            }
+            else
+            {
+                return BadRequest(result.Errors);
+            }
         }
 
         [HttpPost]
@@ -137,6 +162,7 @@ namespace HR_Operations_System.Controllers
             }
             return generatedCode;
         }
+
         private string GeneratePassword(int length = 8)
         {
             const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

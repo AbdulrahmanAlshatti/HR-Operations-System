@@ -1,6 +1,8 @@
 ﻿using HR_Operations_System.Data;
 using HR_Operations_System.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -11,9 +13,11 @@ namespace HR_Operations_System.Business
     public class JwtService : IJwtService
     {
         private readonly IConfiguration _config;
-        public JwtService(IConfiguration config)
+        private UserManager<AppUser> _userManager;
+        public JwtService(IConfiguration config, UserManager<AppUser> roleManager)
         {
             _config = config;
+            _userManager = roleManager;
         }
 
         string GetTimeString(TimeSpan time)
@@ -21,7 +25,6 @@ namespace HR_Operations_System.Business
             DateTime dateTime = DateTime.Today.Add(time);
             return dateTime.ToString("hh:mm tt");
         }
-
         public Task<string> GenerateTokenAsync(AppUser user, Employee emp)
         {
             var userInfo = new
@@ -42,6 +45,7 @@ namespace HR_Operations_System.Business
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim("fingerCode", emp.FingerCode.ToString()),
             new Claim("empId", emp.Id.ToString()),
+            new Claim("role",_userManager.GetRolesAsync(user).Result.First()),
             new Claim("userInfo", JsonSerializer.Serialize(userInfo)),
         };
 
