@@ -34,7 +34,7 @@ namespace HR_Operations_System.Controllers
         }
         [HttpPost]
         [Route("AddEmployeeAllow")]
-        public async Task<ActionResult> GetEmployeeAllowsById(EmployeeAllow entity)
+        public async Task<ActionResult> AddEmployeeAllow(EmployeeAllow entity)
         {
             await _repo.UpdateAsync<Employee>(entity.EmpId, c => { c.HasAllow = true; return Task.CompletedTask; });
             await _repo.AddAsync<EmployeeAllow>(entity);
