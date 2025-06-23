@@ -81,7 +81,7 @@ namespace HR_Operations_System.Controllers
                 if (isAdded == true)
                 {
                     emailrequest.SendEmail(data.Email, "Credentials", $"Dear {prefix}.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
-                    return Ok();
+                    return Ok(new { message = "Registered." });
                 }
                 //emailrequest.SendEmail(data.Email, "Credentials", $"Dear {prefix}.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
                 return BadRequest();
