@@ -24,6 +24,23 @@ namespace HR_Operations_System.Controllers
             var timingplans = await _rep.GetAsync<TimingPlan>();
             return Ok(timingplans);
         }
+        [HttpGet]
+        [Route("GetTimePlansNonAllow")]
+        public async Task<ActionResult<IEnumerable<TimingPlan>>> GetTimePlansNonAllow()
+        {
+            var timingplans = await _rep.GetAsync<TimingPlan>();
+            return Ok(timingplans.Where(x => x.IsAllow == false).Select(x => x));
+            // return is allow false
+        }
+        [HttpGet]
+        [Route("GetAllowTimePlan")]
+        public async Task<ActionResult<IEnumerable<TimingPlan>>> GetAllowTimePlan()
+        {
+            // return is allow true
+            var timingplans = await _rep.GetAsync<TimingPlan>();
+            return Ok(timingplans.Where(x => x.IsAllow == true).Select(x => x));
+        }
+
     }
 
 

@@ -2,6 +2,7 @@
 using HR_Operations_System.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PdfReportGenerator;
 
 namespace HR_Operations_System.Controllers
 {
@@ -38,5 +39,26 @@ namespace HR_Operations_System.Controllers
             await _repo.AddAsync<EmployeeAllow>(entity);
             return Ok("Employee Has been added");
         }
+        [HttpDelete]
+        [Route("EndAllow")]
+        public async Task<ActionResult> EndAllow(int id)
+        {
+
+            await _repo.UpdateAsync<EmployeeAllow>(id, c => {
+                c.Status = false;
+                return Task.CompletedTask;
+                });
+            return Ok();
+
+        }
+        //[HttpPost]
+        //[Route("EndAllow")]
+        //public async Task<ActionResult> EndAllow(int id, DateTime date)
+        //{
+        //    var AllowList = await _repo.GetByAsync<EmployeeAllow>(c => c.Id == id);
+        //    var newEmpAllow = new EmployeeAllow();
+        //    await _repo.UpdateAsync<EmployeeAllow>(Id, c => c.Id == id)
+        //}
     }
 }
+
