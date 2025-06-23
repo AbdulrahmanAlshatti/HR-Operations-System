@@ -29,7 +29,8 @@ namespace HR_Operations_System.Controllers
         public async Task<ActionResult<IEnumerable<TimingPlan>>> GetTimePlansNonAllow()
         {
             var timingplans = await _rep.GetAsync<TimingPlan>();
-            return Ok(timingplans.Where(x => x.IsAllow == false).Select(x => x));
+            var timingPlansList = timingplans.Where(x => x.IsAllow == false).ToList();
+            return Ok(timingPlansList);
             // return is allow false
         }
         [HttpGet]
@@ -38,7 +39,8 @@ namespace HR_Operations_System.Controllers
         {
             // return is allow true
             var timingplans = await _rep.GetAsync<TimingPlan>();
-            return Ok(timingplans.Where(x => x.IsAllow == true).Select(x => x));
+            var timingPlansList = timingplans.Where(x => x.IsAllow == true).ToList();
+            return Ok(timingPlansList);
         }
 
     }

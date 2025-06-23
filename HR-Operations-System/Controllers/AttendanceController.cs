@@ -1,8 +1,8 @@
 ﻿using HR_Operations_System.Business;
+using HR_Operations_System.Data;
 using HR_Operations_System.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static HR_Operations_System.Controllers.AttendancesController;
 
 namespace HR_Operations_System.Controllers
 {
@@ -13,8 +13,10 @@ namespace HR_Operations_System.Controllers
         private IRepository _rep;
         private readonly ILogger<AttendancesController> _logger;
 
-        public AttendancesController(IRepository rep, ILogger<AttendancesController> logger)
+        private readonly AppDbContext _context;
+        public AttendancesController(AppDbContext context, IRepository rep, ILogger<AttendancesController> logger)
         {
+            _context = context;
             _rep = rep;
             _logger = logger;
         }
@@ -48,16 +50,10 @@ namespace HR_Operations_System.Controllers
         {
             DateTime dateTime = getAttendanceDay.Day.ToDateTime(new TimeOnly());
             var result = await _rep.GetListByAsync<Attendance>(x => x.FingerCode == getAttendanceDay.FingerCode && x.IODateTime.Date == dateTime);
-            return Ok(result);
+            return Ok(result.ToList());
         }
 
 
-        public class EmployeCalculationRequestBody
-        {
-            public int Year { get; set; }
-            public int Month { get; set; }
-            public int FingerCode { get; set; }
-        }
 
 
         [HttpPost]
@@ -82,13 +78,34 @@ namespace HR_Operations_System.Controllers
         {
             return date.DayOfWeek == DayOfWeek.Friday || date.DayOfWeek == DayOfWeek.Saturday;
         }
+
+        private TimingPlan GetTimingPlanFromEmployee(Employee employee)
+        {
+            if (!employee.HasAllow)
+                return NewMethod(employee.TimingPlan);
+
+            var a = _context.EmployeeAllows.FirstOrDefault(x => x.EmpId == employee.Id);
+
+            if (a == null)
+                return NewMethod(employee.TimingPlan);
+
+            return _context.TimingPlans.FirstOrDefault(x => x.Id == a.TimingCode);
+            //return NewMethod(a.TimingPlan);
+        }
+
+        static TimingPlan NewMethod(TimingPlan res)
+        {
+            if (res != null) res.Employees = null;
+            return res;
+        }
+
         [HttpPost]
         [Route("GetTransactionsOfDay")]
         public async Task<IEnumerable<Transaction>> GetTransactionsOfDay(int FingerCode, DateTime dateTime)
         {
             var fingerPrints = await _rep.GetListByAsync<Attendance>(x => x.FingerCode == FingerCode && x.IODateTime.Date == dateTime);
-            var employee = await _rep.GetByAsync<Employee>(x => x.Id == FingerCode);
-            var timingPlan = await _rep.GetByAsync<TimingPlan>(x => x.Id == employee.TimingCode);
+            var employee = _context.Employees.Include(x=>x.TimingPlan).FirstOrDefault(x => x.Id == FingerCode);
+            var timingPlan = GetTimingPlanFromEmployee(employee);
             List<Transaction> transactionList = new List<Transaction>();
             bool wentToWork = false;
 
@@ -203,8 +220,8 @@ namespace HR_Operations_System.Controllers
             System.Random r = new System.Random();
             List<Node> nodeList = (await _rep.GetAsync<Node>()).ToList();
 
-            DateTime startDate = new DateTime(2026, 4, 1);
-            DateTime endDate = new DateTime(2026, 6, 30);
+            DateTime startDate = new DateTime(2025, 4, 1);
+            DateTime endDate = new DateTime(2025, 6, 30);
 
             for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
             {
@@ -269,6 +286,12 @@ namespace HR_Operations_System.Controllers
         }
 
 
+    }
+    public class EmployeCalculationRequestBody
+    {
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int FingerCode { get; set; }
     }
 
 

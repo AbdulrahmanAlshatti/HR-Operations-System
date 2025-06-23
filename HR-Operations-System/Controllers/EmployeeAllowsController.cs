@@ -13,7 +13,7 @@ namespace HR_Operations_System.Controllers
         private IRepository _repo;
         private readonly ILogger<EmployeeAllowsController> _logger;
 
-        public EmployeeAllowsController (IRepository repo, ILogger<EmployeeAllowsController> logger)
+        public EmployeeAllowsController(IRepository repo, ILogger<EmployeeAllowsController> logger)
         {
             _repo = repo;
             _logger = logger;
@@ -34,20 +34,22 @@ namespace HR_Operations_System.Controllers
         }
         [HttpPost]
         [Route("AddEmployeeAllow")]
-        public async Task<ActionResult<IEnumerable<EmployeeAllow>>> GetEmployeeAllowsById(EmployeeAllow entity)
+        public async Task<ActionResult> GetEmployeeAllowsById(EmployeeAllow entity)
         {
+            await _repo.UpdateAsync<Employee>(entity.EmpId, c => { c.HasAllow = true; return Task.CompletedTask; });
             await _repo.AddAsync<EmployeeAllow>(entity);
-            return Ok("Employee Has been added");
+            return Ok(new { message = "Employee Has been added" });
         }
         [HttpDelete]
         [Route("EndAllow")]
         public async Task<ActionResult> EndAllow(int id)
         {
 
-            await _repo.UpdateAsync<EmployeeAllow>(id, c => {
+            await _repo.UpdateAsync<EmployeeAllow>(id, c =>
+            {
                 c.Status = false;
                 return Task.CompletedTask;
-                });
+            });
             return Ok();
 
         }

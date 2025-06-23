@@ -25,9 +25,9 @@ namespace HR_Operations_System.Controllers
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(UserManager<AppUser> userManager,
-            SignInManager<AppUser> signinManager, 
-            RoleManager<IdentityRole> roleManager, 
-            ILogger<AccountController> logger, 
+            SignInManager<AppUser> signinManager,
+            RoleManager<IdentityRole> roleManager,
+            ILogger<AccountController> logger,
             IRepository rep,
             IJwtService jwtService)
         {
@@ -58,7 +58,7 @@ namespace HR_Operations_System.Controllers
             var result = await _userManager.CreateAsync(user, password);
             if (result.Succeeded)
             {
-                 var roleResult =  await _userManager.AddToRoleAsync(user, data.Role);
+                var roleResult = await _userManager.AddToRoleAsync(user, data.Role);
                 if (roleResult.Errors.Any())
                 {
                     return BadRequest(roleResult.Errors);
@@ -69,8 +69,8 @@ namespace HR_Operations_System.Controllers
                     UserId = user.Id,
                     FingerCode = await GenerateFingerCode(),
                     DeptCode = data.DeptCode,
-                    NameA = "",
-                    NameE = $"{user.FirstName} {user.LastName}",
+                    NameA = $"{user.FirstName} {user.LastName}",
+                    NameE = "Placeholder",
                     TimingCode = data.TimingCode,
                     JobType = 1,
                     Sex = data.Gender,
@@ -78,7 +78,7 @@ namespace HR_Operations_System.Controllers
                     CheckLate = true,
                     IsActive = true
                 });
-                if(isAdded == true)
+                if (isAdded == true)
                 {
                     emailrequest.SendEmail(data.Email, "Credentials", $"Dear {prefix}.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
                     return Ok();
@@ -91,7 +91,7 @@ namespace HR_Operations_System.Controllers
                 //emailrequest.SendEmail(data.Email, "Credentials", $"Dear {prefix}.{data.LastName}, \n Your Organization Credentials are: \nUsername: {data.Email} \nPassword: {password}");
                 return BadRequest(result.Errors);
             }
-            
+
         }
         [HttpPost]
         [Route("AddRole")]
@@ -127,7 +127,7 @@ namespace HR_Operations_System.Controllers
                 return Ok(new { token });
             }
 
-                return Unauthorized("Invalid credentials");
+            return Unauthorized("Invalid credentials");
         }
 
         [HttpPost]
@@ -157,7 +157,8 @@ namespace HR_Operations_System.Controllers
 
             var fingerCodes = (await _rep.GetAsync<Employee>()).Select(c => c.FingerCode);
             int generatedCode = _rdm.Next(_min, _max);
-            while(fingerCodes.Contains(generatedCode)){
+            while (fingerCodes.Contains(generatedCode))
+            {
                 generatedCode = _rdm.Next(_min, _max);
             }
             return generatedCode;

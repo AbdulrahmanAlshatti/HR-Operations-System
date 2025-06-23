@@ -9,7 +9,7 @@ namespace HR_Operations_System.Models
         public int EmpId { get; set; }
         public virtual Employee? Employee { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndtDate { get; set; }
+        public DateTime EndDate { get; set; }
         [ForeignKey(nameof(TimingPlan))]
         public int TimingCode { get; set; }
         public virtual TimingPlan? TimingPlan { get; set; }

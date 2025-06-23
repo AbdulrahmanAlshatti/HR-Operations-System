@@ -1,4 +1,6 @@
-﻿namespace HR_Operations_System.Models
+﻿using System.Text.Json.Serialization;
+
+namespace HR_Operations_System.Models
 {
     public class TimingPlan
     {
@@ -13,7 +15,8 @@
         public bool IsRamadan { get; set; }
         public bool IsAllow { get; set; }
         public virtual IEnumerable<Employee>? Employees { get; set; }
-        public virtual IEnumerable<EmployeeAllow>? EmployeeAllows { get; set; }
+
+        [JsonIgnore] public virtual IEnumerable<EmployeeAllow>? EmployeeAllows { get; set; }
     }
 
 
