@@ -5,10 +5,12 @@ using HR_Operations_System.Models.RequestModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR_Operations_System.Controllers
 {
@@ -22,15 +24,19 @@ namespace HR_Operations_System.Controllers
         private IRepository _rep;
         private IJwtService _jwtService;
 
+        private readonly AppDbContext _context;
+
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(UserManager<AppUser> userManager,
             SignInManager<AppUser> signinManager,
             RoleManager<IdentityRole> roleManager,
+            AppDbContext context,
             ILogger<AccountController> logger,
             IRepository rep,
             IJwtService jwtService)
         {
+            _context = context;
             _userManager = userManager;
             _signinManager = signinManager;
             _roleManager = roleManager;
@@ -38,6 +44,9 @@ namespace HR_Operations_System.Controllers
             _logger = logger;
             _jwtService = jwtService;
         }
+
+
+
 
         [HttpPost]
         [Route("Register")]
@@ -190,6 +199,340 @@ namespace HR_Operations_System.Controllers
             // Shuffle the result to prevent predictable character positions
             return new string(password.ToString().OrderBy(c => random.Next()).ToArray());
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public async void addRandomData()
+        {
+            string password = "12345@Abc";
+
+            _context.Locations.Add(new Location()
+            {
+                DescA = "الرئيسي",
+                DescE = "HQ Building",
+            });
+
+            _context.Locations.Add(new Location()
+            {
+                DescA = "مشرف",
+                DescE = "Mishrif",
+            });
+
+            _context.Locations.Add(new Location()
+            {
+                DescA = "جنوب السرة",
+                DescE = "South Surra",
+            });
+
+            _context.Locations.Add(new Location()
+            {
+                DescA = "فهد الأحمد",
+                DescE = "Fahad Al-Ahmad",
+            });
+
+            _context.Nodes.Add(new Node()
+            {
+                SerialNo = "SERIAL_MAIN_GROUND",
+                DescA = "جهاز دور الأرضي",
+                DescE = "HQ G",
+                LocCode = 1,
+                Floor = "G",
+            });
+
+            for (int i = 1; i < 22; i++)
+            {
+
+                _context.Nodes.Add(new Node()
+                {
+                    SerialNo = $"SERIAL_MAIN_FLOOR{i}-1",
+                    DescA = $"جهاز الرئيسي دور {i}-1",
+                    DescE = $"HQ Floor {i}-1",
+                    LocCode = 1,
+                    Floor = $"{i}",
+                });
+
+                _context.Nodes.Add(new Node()
+                {
+                    SerialNo = $"SERIAL_MAIN_FLOOR{i}-2",
+                    DescA = $"جهاز الرئيسي دور {i}-2",
+                    DescE = $"HQ Floor {i}-2",
+                    LocCode = 1,
+                    Floor = $"{i}",
+                });
+
+            }
+
+            _context.Nodes.Add(new Node()
+            {
+                SerialNo = "SERIAL_MISHRIF_1",
+                DescA = "جهاز مشرف 1",
+                DescE = "Mishrif 1",
+                LocCode = 2,
+                Floor = "G",
+            });
+
+            _context.Nodes.Add(new Node()
+            {
+                SerialNo = "SERIAL_MISHRIF_2",
+                DescA = "جهاز مشرف 2",
+                DescE = "Mishrif 2",
+                LocCode = 2,
+                Floor = "G",
+            });
+
+
+
+            _context.Nodes.Add(new Node()
+            {
+                SerialNo = "SERIAL_SOUTH_SURRA_1",
+                DescA = "جهاز جنوب السرة 1",
+                DescE = "South Surra 1",
+                LocCode = 3,
+                Floor = "G",
+            });
+
+            _context.Nodes.Add(new Node()
+            {
+                SerialNo = "SERIAL_SOUTH_SURRA_2",
+                DescA = "جهاز جنوب السرة 2",
+                DescE = "South Surra 2",
+                LocCode = 3,
+                Floor = "G",
+            });
+
+            _context.Nodes.Add(new Node()
+            {
+                SerialNo = "SERIAL_FAHAD_ALAHMAD_1",
+                DescA = "جهاز فهد الأحمد 1",
+                DescE = "Fahad Al-Ahmad 1",
+                LocCode = 4,
+                Floor = "G",
+            });
+
+            _context.Nodes.Add(new Node()
+            {
+                SerialNo = "SERIAL_FAHAD_ALAHMAD_2",
+                DescA = "جهاز فهد الأحمد 2",
+                DescE = "Fahad Al-Ahmad 2",
+                LocCode = 4,
+                Floor = "G",
+            });
+
+
+
+
+            _context.Departments.Add(new Department()
+            {
+                DescA = "إدارة الأشتراكات",
+                DescE = "ASDF",
+                IsActive = true,
+                DeptCode = 345,
+            });
+
+            _context.Departments.Add(new Department()
+            {
+                DescA = "إدارة الأنظمة والتطبيقات الذكية",
+                DescE = "Smart Systems",
+                IsActive = true,
+                DeptCode = 812,
+            });
+
+            _context.TimingPlans.Add(new TimingPlan()
+            {
+                DescA = "صباحي",
+                DescE = "Morning",
+                FromTime = new TimeSpan(7, 45, 00),
+                ToTime = new TimeSpan(14, 00, 00),
+                RmdFromTime = new TimeSpan(8, 45, 00),
+                RmdToTime = new TimeSpan(14, 00, 00),
+                IsRamadan = false,
+                IsAllow = false,
+            });
+
+            _context.TimingPlans.Add(new TimingPlan()
+            {
+                DescA = "مسائي",
+                DescE = "Night",
+                FromTime = new TimeSpan(17, 0, 00),
+                ToTime = new TimeSpan(21, 00, 00),
+                RmdFromTime = new TimeSpan(17, 30, 00),
+                RmdToTime = new TimeSpan(20, 30, 00),
+                IsRamadan = false,
+                IsAllow = false,
+            });
+
+            _context.TimingPlans.Add(new TimingPlan()
+            {
+                DescA = "تخفيف أمومة",
+                DescE = "Maternal Reduction",
+                FromTime = new TimeSpan(9, 00, 00),
+                ToTime = new TimeSpan(13, 00, 00),
+                RmdFromTime = new TimeSpan(9, 30, 00),
+                RmdToTime = new TimeSpan(12, 30, 00),
+                IsRamadan = false,
+                IsAllow = true,
+            });
+
+            _context.TimingPlans.Add(new TimingPlan()
+            {
+                DescA = "تخفيف طبي",
+                DescE = "Medical Reduction",
+                FromTime = new TimeSpan(9, 30, 00),
+                ToTime = new TimeSpan(13, 00, 00),
+                RmdFromTime = new TimeSpan(10, 00, 00),
+                RmdToTime = new TimeSpan(12, 30, 00),
+                IsRamadan = false,
+                IsAllow = true,
+            });
+
+
+            _context.SaveChanges();
+
+            List<(string, string, string, string, int)> emailList = [
+                ("abdulrahmanalshatti@mail.com", "عبدالرحمن", "الشطي","Admin",1),
+                ("abdulrahmanalkandari@mail.com", "عبدالرحمن", "الكندري","Admin",1),
+                ("zalhallaq@mail.com", "زينب", "الحلاق","Employee",2),
+                ("beshow95@mail.com", "بشاير", "الخالدي","Employee",2),
+            ];
+
+
+            foreach (var data in emailList)
+            {
+                AppUser user = new AppUser
+                {
+                    UserName = data.Item1,
+                    Email = data.Item1,
+                    FirstName = data.Item2,
+                    LastName = data.Item3,
+                    IsFirstLogin = true
+                };
+                var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, data.Item4);
+
+                    var isAdded = await _rep.AddAsync<Employee>(new Employee
+                    {
+                        UserId = user.Id,
+                        FingerCode = await GenerateFingerCode(),
+                        DeptCode = 812,
+                        NameA = $"{user.FirstName} {user.LastName}",
+                        NameE = "Placeholder",
+                        TimingCode = 1,
+                        JobType = 1,
+                        Sex = data.Item5,
+                        HasAllow = false,
+                        CheckLate = true,
+                        IsActive = true
+                    });
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+                AddDummyData(i);
+
+        }
+
+
+        public async void AddDummyData(int FingerCode)
+        {
+            System.Random r = new System.Random();
+            List<Node> nodeList = (await _rep.GetAsync<Node>()).ToList();
+
+            DateTime startDate = new DateTime(2025, 4, 1);
+            DateTime endDate = new DateTime(2025, 6, 30);
+
+            for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+            {
+                if (date.DayOfWeek == DayOfWeek.Friday || date.DayOfWeek == DayOfWeek.Saturday)
+                    continue;
+
+                if (r.NextDouble() < 0.05)
+                    continue;
+
+                if (r.NextDouble() < 0.95)
+                {
+                    Attendance enter = new Attendance()
+                    {
+                        FingerCode = FingerCode,
+                        IODateTime = date.AddMinutes(r.Next(360, 540)),
+                        NodeSerialNo = nodeList[r.Next(nodeList.Count)].SerialNo,
+                        IsActive = true,
+                        TrType = 0,
+                    };
+                    await _rep.AddAsync(enter);
+                }
+
+                if (r.NextDouble() < 0.1)
+                {
+                    Attendance excuseLeave = new Attendance()
+                    {
+                        FingerCode = FingerCode,
+                        IODateTime = date.AddMinutes(r.Next(570, 670)),
+                        NodeSerialNo = nodeList[r.Next(nodeList.Count)].SerialNo,
+                        IsActive = true,
+                        TrType = 1,
+                    };
+
+                    Attendance excuseEnter = new Attendance()
+                    {
+                        FingerCode = FingerCode,
+                        IODateTime = date.AddMinutes(r.Next(680, 780)),
+                        NodeSerialNo = nodeList[r.Next(nodeList.Count)].SerialNo,
+                        IsActive = true,
+                        TrType = 0,
+                    };
+
+                    await _rep.AddAsync(excuseLeave);
+                    await _rep.AddAsync(excuseEnter);
+                }
+
+
+                if (r.NextDouble() < 0.95)
+                {
+                    Attendance leave = new Attendance()
+                    {
+                        FingerCode = FingerCode,
+                        IODateTime = date.AddMinutes(r.Next(810, 870)),
+                        NodeSerialNo = nodeList[r.Next(nodeList.Count)].SerialNo,
+                        IsActive = true,
+                        TrType = 1,
+                    };
+                    await _rep.AddAsync(leave);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }
