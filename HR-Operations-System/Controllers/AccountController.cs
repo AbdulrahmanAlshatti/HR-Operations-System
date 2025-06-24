@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System.Data;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
@@ -408,6 +409,10 @@ namespace HR_Operations_System.Controllers
                 ("beshow95@mail.com", "بشاير", "الخالدي","Employee",2),
             ];
 
+
+            await _roleManager.CreateAsync(new IdentityRole { Name = "Employee" });
+
+            await _roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
 
             foreach (var data in emailList)
             {
